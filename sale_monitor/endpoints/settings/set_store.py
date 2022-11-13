@@ -9,7 +9,7 @@ from flask import (
 bp = Blueprint('set_store', __name__)
 
 
-@bp.route('/set_store', methods=('GET', 'OPTIONS'))
+@bp.route('/set_store', methods=('POST', 'OPTIONS'))
 def set_store():
     """ Expects: {'location_id': <>, 'chain': <>, 'address1': <>,
                     'city': <>, 'state': <>, 'zipcode': <>}
@@ -21,16 +21,14 @@ def set_store():
         resp = Response()
         add_cors_headers(resp)
         return resp
-    payload: dict = request.json['payload']
-    #@TODO Add some sort of guard clause here for contact_id
-    # Made that unnecessary by inserting an intial entry in schema.sql?
+    print(request.json)
     ret = DBInterface.set_store(session.get('contact_id'),
-                                payload['location_id'],
-                                payload['chain'],
-                                payload['address1'],
-                                payload['city'],
-                                payload['state'],
-                                payload['zipcode'])
+                                request.json['location_id'],
+                                request.json['chain'],
+                                request.json['address1'],
+                                request.json['city'],
+                                request.json['state'],
+                                request.json['zipcode'])
     if ret[1]:
         print(f'Error in set_store endpoint: {ret}')
         resp = Response(response=json.dumps(ret[1]))
@@ -39,4 +37,4 @@ def set_store():
         return resp
     else:
         print('Success in set_store endpoint')
-        return 200, {}
+        return {}, 200

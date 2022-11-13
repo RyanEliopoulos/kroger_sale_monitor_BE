@@ -63,10 +63,11 @@ class DBInterface:
         sqlstring: str = """ SELECT * 
                              FROM contact_details
                                   LEFT JOIN watched_products 
-                                  ON contact_details.id = watched_products.product_contact_id 
+                                  ON contact_details.id = watched_products.contact_id 
                          """
         ret = DBInterface._execute_query(sqlstring, selection=True)
         if ret[0]:
+            print(f'SQL error in get_all: {ret}')
             return ret
         crsr: sqlite3.Cursor = ret[1]['cursor']
         sqlrows: List[sqlite3.Row] = crsr.fetchall()
@@ -75,9 +76,25 @@ class DBInterface:
             print('get_all row length is zero. No contact information exists')
             return None
         print('Successfully pulled data in get_all. Packaging for consumption')
+        data_dict: dict = {
+            'id': sqlrows[0]['id'],
+            'location_id': sqlrows[0]['location_id'],
+            'chain': sqlrows[0]['chain'],
+            'address1': sqlrows[0]['address1'],
+            'city': sqlrows[0]['city'],
+            'state': sqlrows[0]['state'],
+            'zipcode': sqlrows[0]['zipcode'],
+            'email':  sqlrows[0]['email'],
+            'products': []
+        }
         for row in sqlrows:
-            print(row)
-        # @TODO actually package this once we know what form it takes
+            product_dict: dict = {
+                'upc': row['product_upc'],
+                'target_price': row['target_price'],
+                'last_discount_rate': row['last_discount_rate'],
+            }
+            data_dict['products'].append(product_dict)
+        return 0, {'data': data_dict}
 
     @staticmethod
     def set_email(contact_id: int, email: str) -> Tuple[int, dict]:

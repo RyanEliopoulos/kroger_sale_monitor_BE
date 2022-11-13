@@ -9,7 +9,7 @@ from flask import (
 bp = Blueprint('set_email', __name__)
 
 
-@bp.route('/set_email', methods=('GET', 'OPTIONS'))
+@bp.route('/set_email', methods=('POST', 'OPTIONS'))
 def set_email():
     """ Updates contact email """
     if request.method == 'OPTIONS':
@@ -18,8 +18,8 @@ def set_email():
         resp = Response()
         add_cors_headers(resp)
         return resp
-    payload: dict = request.json.get('payload')
-    new_email: str = payload.get('email')
+    print('In set_email endpint.')
+    new_email: str = request.json.get('email')
     #@TODO make sure this works. Add a guard to catch API calls missing the contact_id
     # (above unnecessary since schema.sql is inserting the one and only entry, so one will always be present.
     ret = DBInterface.set_email(session.get('contact_id'), new_email)

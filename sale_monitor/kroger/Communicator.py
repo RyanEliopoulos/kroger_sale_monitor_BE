@@ -128,7 +128,7 @@ class Communicator:
             print(f'request error searching lcoations: {req.text}')
             return -1, {'error': f'{req.status_code}: {req.text}'}
         print(f'successfully searched locations: {req.json()}')
-        return 0, {'results': req.json()}
+        return 0, req.json()
 
 
 

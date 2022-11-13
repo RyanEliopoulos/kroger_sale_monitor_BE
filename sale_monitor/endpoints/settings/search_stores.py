@@ -22,8 +22,8 @@ def search_stores():
         resp = Response()
         add_cors_headers(resp)
         return resp
-    payload: dict = request.json['payload']
-    zipcode: str = payload['zipcode']
+    zipcode: str = request.json['zipcode']
+    # zipcode: str = payload['zipcode']
     print(f'Searching locations with zipcode: {zipcode}')
     ret = Communicator.search_locations(zipcode)
     if ret[0]:

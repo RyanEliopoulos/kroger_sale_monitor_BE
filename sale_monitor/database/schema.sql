@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS watched_products;
-DROP TABLE IF EXISTS contacts;
+DROP TABLE IF EXISTS contact_details;
 
 
 CREATE TABLE contact_details (
@@ -10,7 +10,7 @@ CREATE TABLE contact_details (
     address1 TEXT NOT NULL,
     city TEXT NOT NULL,
     state TEXT NOT NULL,
-    zip_code TEXT NOT NULL
+    zipcode TEXT NOT NULL
 );
 
 CREATE TABLE watched_products (
@@ -26,4 +26,4 @@ CREATE TABLE watched_products (
 
 --- Simplify error handling and whatever. Just assume there is always 1 entry in the contact_details table.
 INSERT INTO contact_details
-VALUES (1, 'defaultemail@madeup.pretend', '9999999', 'none selected', '', '', '', '')
+VALUES (1, 'email', '', 'chain', 'address1', 'city', 'state', 'zipcode')

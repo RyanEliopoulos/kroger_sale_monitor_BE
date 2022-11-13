@@ -28,7 +28,7 @@ def get_all():
         resp.status_code = 200
         add_cors_headers(resp)
         return resp
-    elif ret[1]:
+    elif ret[0]:
         # Error
         print(f'get_all endpoint got error from db: {ret}')
         resp = Response(response=json.dumps({'error': ret[1]['error']}))
@@ -40,9 +40,9 @@ def get_all():
         # Sending data to client and updating session cookie
         data_dict: dict = ret[1]['data']
         print(f'Successfully pulled data for get_all endpoint: {data_dict}')
-        session['contact_id'] = data_dict['contact_id']
+        session['contact_id'] = data_dict['id']
         session['location_id'] = data_dict['location_id']
-        resp = Response(response=json.dumps({'data': data_dict}))
+        resp = Response(response=json.dumps(data_dict))
         resp.status_code = 200
         add_cors_headers(resp)
         return resp

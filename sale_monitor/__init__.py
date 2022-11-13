@@ -34,4 +34,18 @@ def create_app(test_config=None):
     from sale_monitor.database import db
     db.init_app(app)
 
+    from .endpoints.settings import search_stores, set_email, set_store
+    app.register_blueprint(search_stores.bp)
+    app.register_blueprint(set_email.bp)
+    app.register_blueprint(set_store.bp)
+
+    from .endpoints.watched_items import delete_watched, new_watched, update_watched
+    app.register_blueprint(delete_watched.bp)
+    app.register_blueprint(new_watched.bp)
+    app.register_blueprint(update_watched.bp)
+
+    from .endpoints import get_all, search_products
+    app.register_blueprint(get_all.bp)
+    app.register_blueprint(search_products.bp)
+
     return app
