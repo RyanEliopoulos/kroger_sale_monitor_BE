@@ -24,6 +24,7 @@ def get_all():
     ret = DBInterface.get_all()
     if ret is None:
         # Missing contact information. Yet to perform initial setup
+        print(f'Problem in get_all endpoint: Missing contact info')
         resp = Response(response=json.dumps({'data': None}))
         resp.status_code = 200
         add_cors_headers(resp)
@@ -42,6 +43,8 @@ def get_all():
         print(f'Successfully pulled data for get_all endpoint: {data_dict}')
         session['contact_id'] = data_dict['id']
         session['location_id'] = data_dict['location_id']
+        print('\n\n')
+        print(data_dict)
         resp = Response(response=json.dumps(data_dict))
         resp.status_code = 200
         add_cors_headers(resp)

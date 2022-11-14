@@ -89,7 +89,7 @@ class DBInterface:
         }
         for row in sqlrows:
             product_dict: dict = {
-                'upc': row['product_upc'],
+                'product_upc': row['product_upc'],
                 'target_price': row['target_price'],
                 'last_discount_rate': row['last_discount_rate'],
             }
@@ -143,7 +143,7 @@ class DBInterface:
           Needs to return the primary key of the new entry
         """
         print('in DBInterface.new_watched')
-        sqlstring: str = """ INSERT INTO watched_products
+        sqlstring: str = """ INSERT INTO watched_products (contact_id, product_upc, target_price)
                              VALUES (?, ?, ?)
                          """
         ret = DBInterface._execute_query(sqlstring,
@@ -158,6 +158,25 @@ class DBInterface:
         new_id: str = crsr.lastrowid
         print(f'SQL success in new_watched. primary key: {new_id}')
         return 0, {'new_watched_id': new_id}
+
+    @staticmethod
+    def get_product(product_id: str) -> Tuple[int, dict]:
+        sqlstring: str = """  SELECT * FROM watched_products
+                              WHERE id = ?
+                         """
+        ret = DBInterface._execute_query(sqlstring, (product_id,), selection=True)
+        if ret[0]:
+            print(f'SQL error in get_product: {ret}')
+            return ret
+        print('SQL success in get_product')
+        crsr: sqlite3.Cursor = ret[1]['cursor']
+        row: sqlite3.Row = crsr.fetchone()
+        product_dict: dict = {
+            'product_upc': row['product_upc'],
+            'target_price': row['target_price'],
+            'last_discount_rate': row['last_discount_rate']
+        }
+        return 0, product_dict
 
     @staticmethod
     def delete_watched(target_id: int) -> Tuple[int, dict]:
