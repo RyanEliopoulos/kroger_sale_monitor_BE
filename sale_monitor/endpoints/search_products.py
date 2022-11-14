@@ -19,7 +19,7 @@ def search_products():
     """
         Expects either query parameters of the following
         IF initial_query
-            {'search_term': <>, 'initial_query': true, 'page_size': <>}
+            {'search_term': <>, 'initial_query': true, 'page_size': <>, 'page': 1}
         ELSE
             {'search_term': <>, 'initial_query': false, 'page_size', 'page': <>}
 
@@ -48,18 +48,18 @@ def search_products():
         return {'error': 'Must select a location first'}, 403
 
     # It is a GET so no body allowed I guess. Query string only.
+    print(f'query string: {request.query_string}')
     search_term: str = request.args.get('search_term')
     page_size: int = int(request.args.get('page_size'))
-    page: Union[str, None] = request.args.get('page')
-    is_init_query: Union[bool, None] = request.args.get('initial_query')
-
+    page: int = int(request.args.get('page'))
+    is_init_query: bool = bool(request.args.get('initial_query'))
     if is_init_query:
         print('In search_products endpoint with initial query to Kroger')
         # Need to calculate pagination details for client
         ret = Communicator.search_products(search_term,
                                            session.get('location_id'),
                                            page_size,
-                                           1)
+                                           page)
         if ret[0]:
             print(f'Probelm in search_products endpoint: {ret}')
             return ret[1], 500
@@ -70,9 +70,6 @@ def search_products():
             print('In search_products endpoint. No results from Kroger')
             return {'pages': 0, 'data': []}, 200
 
-        #@TODO remove this. Just for reference
-        from sale_monitor.utils.image_sizes import image_sizing
-        image_sizing(ret[1]['data'])
         print(ret[1]['meta'])
         total: int = int(ret[1]['meta']['pagination']['total'])
         pages: int = math.ceil(total / page_size)
@@ -81,6 +78,7 @@ def search_products():
     else:
         # Client provides the pagination details
         print('In search_products endpoint, not initial query to kroger.')
+        print(page_size, page, search_term)
         ret = Communicator.search_products(search_term,
                                            session.get('location_id'),
                                            page_size,

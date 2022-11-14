@@ -76,7 +76,7 @@ class Communicator:
         if req.status_code != 200:
             print(f'Error in search_products: {req.text}')
             return -1, {'error': f'{req.status_code}: {req.text}'}
-        print(f'Success in search_products: {req.json()}')
+        # print(f'Success in search_products: {req.json()}')
         return 0, req.json()
 
     @staticmethod
