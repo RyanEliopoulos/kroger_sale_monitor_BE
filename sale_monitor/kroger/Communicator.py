@@ -15,7 +15,7 @@ class Communicator:
     api_base: str = 'https://api.kroger.com/v1/'
     token_endpoint: str = 'connect/oauth2/token'
     # Endpoint settings
-    product_search_page_size = 15
+    # product_search_page_size = 15
     location_search_filter_limit = 50
 
     @staticmethod
@@ -42,7 +42,8 @@ class Communicator:
         return 0, req.json()  # keyed on access_token
 
     @staticmethod
-    def search_products(search_string: str, location_id: str, page: int = 0) -> Tuple[int, dict]:
+    def search_products(search_string: str, location_id: str, page_size: int,
+                        page: int = 0) -> Tuple[int, dict]:
         """
             Hits the product search endpoint. Includes 'start' parameter, indicating how many products to skip
             in the search. Useful. We want this to support pagination for the sake of performance.
@@ -61,13 +62,14 @@ class Communicator:
             'Accept': 'application/json'
             , 'Authorization': f'Bearer {access_token}'
         }
-        filter_start = 1 + (page * Communicator.product_search_page_size)
+        filter_start = 1 + ((page - 1) * page_size)
+        print(f'in comm.search_products. filter_start is: {filter_start}')
         params = {
             'filter.term': search_string,
             'filter.locationId': location_id,
             'filter.fulfillment': 'csp',
             'filter.start': str(filter_start),
-            'filter.limit': '15',
+            'filter.limit': page_size,  # No larger than 50
         }
         target_url: str = f'{Communicator.api_base}products'
         req = requests.get(target_url, headers=headers, params=params)
@@ -75,7 +77,7 @@ class Communicator:
             print(f'Error in search_products: {req.text}')
             return -1, {'error': f'{req.status_code}: {req.text}'}
         print(f'Success in search_products: {req.json()}')
-        return 0, {'results': req.json()}
+        return 0, req.json()
 
     @staticmethod
     def product_details(upc: str, location_id: str) -> Tuple[int, dict]:

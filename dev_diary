@@ -1,2 +1,11 @@
+
+
+11/13/2022
+    GET requests aren't allowed a body? So any 'args' must be passed in the query string.
+    Kroger product image sizes:
+            small, medium, large, xlarge, thumbnail
+
+    Assuming every image has each size for now.
+
 11/11/2022
    Endeavoring to create a web app to monitor Kroger products for sales and alerting myself to noteworthy ones.
