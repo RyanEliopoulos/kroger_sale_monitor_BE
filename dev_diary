@@ -1,3 +1,8 @@
+11/15/2022
+
+    smtp can only send ascii characters. Non-ascii raises an error.
+
+
 11/14/2022
     Kroger's API is broken tonight so can't confirm but I think the alert system is operational.
     checker./controller.py is to be scheduled with cron Thursdays at noon.

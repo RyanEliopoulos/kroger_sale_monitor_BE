@@ -8,4 +8,5 @@ def send_notification(recipient, message):
     sm = smtplib.SMTP(host='smtp.gmail.com', port=587)
     sm.starttls()
     sm.login(login, password)
-    sm.sendmail(login, recipient, message)
+    ascii_only = message.encode('ascii', 'ignore')
+    sm.sendmail(login, recipient, ascii_only)
