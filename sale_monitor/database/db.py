@@ -7,7 +7,6 @@ import click
 from datetime import datetime
 
 
-
 class DBInterface:
     """ Essentially static """
 

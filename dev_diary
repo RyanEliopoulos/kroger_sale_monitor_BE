@@ -1,3 +1,9 @@
+11/14/2022
+    Kroger's API is broken tonight so can't confirm but I think the alert system is operational.
+    checker./controller.py is to be scheduled with cron Thursdays at noon.
+
+    Next lift is to support multiple users of the system using the contact email as the identifier.
+
 
 
 11/13/2022

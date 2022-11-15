@@ -15,7 +15,7 @@ def create_app(test_config=None):
     print(f'This is the flask_env: {os.getenv("FLASK_ENV")}')
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'webshopper.sqlite')
+        DATABASE=os.path.join(app.instance_path, 'sale_monitor.sqlite')
     )
 
     if test_config is None:
