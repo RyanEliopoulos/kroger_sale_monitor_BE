@@ -1,5 +1,6 @@
 import smtplib
 import os
+import log
 
 
 def send_notification(recipient, message):
@@ -9,4 +10,7 @@ def send_notification(recipient, message):
     sm.starttls()
     sm.login(login, password)
     ascii_only = message.encode('ascii', 'ignore')
-    sm.sendmail(login, recipient, ascii_only)
+    try:
+        sm.sendmail(login, recipient, ascii_only)
+    except Exception as e:
+        log.log(f'Exception occurred trying to send alert: {e}')

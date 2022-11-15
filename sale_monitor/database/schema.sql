@@ -18,9 +18,9 @@ CREATE TABLE watched_products (
     contact_id INTEGER NOT NULL,
     product_upc TEXT NOT NULL,
     product_description TEXT NOT NULL,
-    normal_price FLOAT NOT NULL,
-    promo_price FLOAT NOT NULL,
-    target_price FLOAT NOT NULL,
+    normal_price TEXT NOT NULL,
+    promo_price TEXT NOT NULL,
+    target_price TEXT NOT NULL,
     last_discount_rate FLOAT DEFAULT 0,       --  Percentage off from full price
     timestamp_last_checked INTEGER,
     image_url TEXT NOT NULL,

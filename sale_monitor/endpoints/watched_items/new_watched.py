@@ -40,6 +40,7 @@ def new_watched():
     normal_price: str = str(quantize(request.json['normal_price']))
     promo_price: str = str(quantize(request.json['promo_price']))
     target_price: str = str(quantize(request.json['target_price']))
+    print(f'The target price: {target_price}')
 
     ret = DBInterface.new_watched(session.get('contact_id'),
                                   request.json['product_upc'],
