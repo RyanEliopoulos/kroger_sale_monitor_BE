@@ -12,7 +12,7 @@ bp = Blueprint('delete_watched', __name__)
 @bp.route('/delete_watched', methods=('POST', 'OPTIONS'))
 def delete_watched():
     """
-        Expects {'payload': {'id': <id>}}
+        Expects {'watched_product_id': <>}
     """
     if request.method == 'OPTIONS':
         print('in new_watched preflight')
@@ -20,9 +20,7 @@ def delete_watched():
         resp = Response()
         add_cors_headers(resp)
         return resp
-    payload: dict = request.json['payload']
-    target_id: int = payload['id']
-    ret = DBInterface.delete_watched(target_id)
+    ret = DBInterface.delete_watched(request.json['watched_product_id'])
     if ret[0]:
         print(f'problem in delete_watched endpoint: {ret}')
         return build_resp(ret[1], 500)

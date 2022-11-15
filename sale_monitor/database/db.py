@@ -4,6 +4,8 @@ from flask import current_app, g
 from flask.cli import with_appcontext
 import sqlite3
 import click
+from datetime import datetime
+
 
 
 class DBInterface:
@@ -63,7 +65,7 @@ class DBInterface:
         sqlstring: str = """ SELECT * 
                              FROM contact_details
                                   LEFT JOIN watched_products 
-                                  ON contact_details.id = watched_products.contact_id 
+                                  ON contact_details.contact_id = watched_products.contact_id 
                          """
         ret = DBInterface._execute_query(sqlstring, selection=True)
         if ret[0]:
@@ -77,7 +79,7 @@ class DBInterface:
             return None
         print('Successfully pulled data in get_all. Packaging for consumption')
         data_dict: dict = {
-            'id': sqlrows[0]['id'],
+            'contact_id': sqlrows[0]['contact_id'],
             'location_id': sqlrows[0]['location_id'],
             'chain': sqlrows[0]['chain'],
             'address1': sqlrows[0]['address1'],
@@ -88,11 +90,21 @@ class DBInterface:
             'products': []
         }
         for row in sqlrows:
+            if row['watched_product_id'] is None:
+                # watched_products columns are null.
+                continue
             product_dict: dict = {
+                'watched_product_id': row['watched_product_id'],
                 'product_upc': row['product_upc'],
+                'product_description': row['product_description'],
+                'normal_price': row['normal_price'],
+                'promo_price': row['promo_price'],
                 'target_price': row['target_price'],
+                'image_url': row['image_url'],
                 'last_discount_rate': row['last_discount_rate'],
             }
+            datetime_last_checked: datetime = datetime.fromtimestamp(row['timestamp_last_checked'])
+            product_dict['date_last_checked'] = datetime_last_checked.strftime('%m/%d')
             data_dict['products'].append(product_dict)
         return 0, {'data': data_dict}
 
@@ -101,7 +113,7 @@ class DBInterface:
         print('in DBInterface.set_email')
         sqlstring: str = """ UPDATE contact_details
                              SET email = ?
-                             WHERE id = ?
+                             WHERE contact_id = ?
                          """
         ret = DBInterface._execute_query(sqlstring, (email,
                                                      contact_id))
@@ -122,7 +134,7 @@ class DBInterface:
                                  city = ?,
                                  state = ?,
                                  zipcode = ?
-                             WHERE id = ?
+                             WHERE contact_id = ?
                          """
         ret = DBInterface._execute_query(sqlstring, (location_id,
                                                      chain,
@@ -138,18 +150,28 @@ class DBInterface:
         return 0, {}
 
     @staticmethod
-    def new_watched(contact_id: int, upc: str, target_price: float) -> Tuple[int, dict]:
+    def new_watched(contact_id: int, upc: str, product_description: str,
+                    image_url: str, normal_price: float, promo_price: float,
+                    target_price: float) -> Tuple[int, dict]:
         """
           Needs to return the primary key of the new entry
         """
         print('in DBInterface.new_watched')
-        sqlstring: str = """ INSERT INTO watched_products (contact_id, product_upc, target_price)
-                             VALUES (?, ?, ?)
+        sqlstring: str = """ INSERT INTO watched_products 
+                                (contact_id, product_upc, product_description, image_url, 
+                                normal_price, promo_price, target_price, timestamp_last_checked)
+                             VALUES (?, ?, ?, ?, 
+                                    ?, ?, ?, ?)
                          """
         ret = DBInterface._execute_query(sqlstring,
                                          (contact_id,
                                           upc,
-                                          target_price),
+                                          product_description,
+                                          image_url,
+                                          normal_price,
+                                          promo_price,
+                                          target_price,
+                                          datetime.now().timestamp()),
                                          selection=True)
         if ret[0]:
             print(f'SQL error in new_watched: {ret}')
@@ -162,7 +184,7 @@ class DBInterface:
     @staticmethod
     def get_product(product_id: str) -> Tuple[int, dict]:
         sqlstring: str = """  SELECT * FROM watched_products
-                              WHERE id = ?
+                              WHERE watched_product_id = ?
                          """
         ret = DBInterface._execute_query(sqlstring, (product_id,), selection=True)
         if ret[0]:
@@ -172,19 +194,26 @@ class DBInterface:
         crsr: sqlite3.Cursor = ret[1]['cursor']
         row: sqlite3.Row = crsr.fetchone()
         product_dict: dict = {
+            'watched_product_id': row['watched_product_id'],
+            'image_url': row['image_url'],
             'product_upc': row['product_upc'],
+            'product_description': row['product_description'],
+            'normal_price': row['normal_price'],
+            'promo_price': row['promo_price'],
             'target_price': row['target_price'],
-            'last_discount_rate': row['last_discount_rate']
+            'last_discount_rate': row['last_discount_rate'],
         }
+        datetime_last_checked: datetime = datetime.fromtimestamp(row['timestamp_last_checked'])
+        product_dict['date_last_checked'] = datetime_last_checked.strftime('%m/%d')
         return 0, product_dict
 
     @staticmethod
-    def delete_watched(target_id: int) -> Tuple[int, dict]:
+    def delete_watched(watched_product_id: int) -> Tuple[int, dict]:
         print('in DBInterface.delete_watched')
         sqlstring = """ DELETE FROM watched_products
-                        WHERE id = ?
+                        WHERE watched_product_id = ?
                     """
-        ret = DBInterface._execute_query(sqlstring, (target_id,))
+        ret = DBInterface._execute_query(sqlstring, (watched_product_id,))
         if ret[0]:
             print(f'SQL error in DBinterface.delete_watched: {ret}')
             return ret
@@ -192,22 +221,21 @@ class DBInterface:
         return 0, {}
 
     @staticmethod
-    def update_watched(target_id: int, upc: str, target_price: float) -> Tuple[int, dict]:
+    def update_watched(watched_product_id: int, target_price: float) -> Tuple[int, dict]:
         print('in DBinterface.update_watched')
         sqlstring = """ UPDATE watched_products
-                        SET upc = ?,
-                            target_price = ?,
-                        WHERE id = ?
+                        SET target_price = ?
+                        WHERE watched_product_id = ?
                     """
         ret = DBInterface._execute_query(sqlstring,
-                                         (upc,
-                                          target_price,
-                                          target_id))
+                                         (target_price,
+                                          watched_product_id))
         if ret[0]:
             print(f'SQL error in DBInterface.update_watched: {ret}')
             return ret
         print('SQL success in update_watched')
         return 0, {}
+
 
 # Auxiliary functions
 def init_db():

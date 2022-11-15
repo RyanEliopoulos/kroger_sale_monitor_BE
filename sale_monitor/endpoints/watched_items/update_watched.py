@@ -12,7 +12,8 @@ bp = Blueprint('updated_watched', __name__)
 @bp.route('/update_watched', methods=('POST', 'OPTIONS'))
 def update_watched():
     """
-        Expects {'payload': {'id': <id>, 'upc': <upc>, 'target_price': <>}}
+        Expects {'targetPrice': <>, 'watched_product_id': <>}
+
     """
     if request.method == 'OPTIONS':
         print('in new_watched preflight')
@@ -20,10 +21,8 @@ def update_watched():
         resp = Response()
         add_cors_headers(resp)
         return resp
-    payload: dict = request.json['payload']
-    ret = DBInterface.update_watched(payload['id'],
-                                     payload['upc'],
-                                     payload['target_price'])
+    ret = DBInterface.update_watched(request.json['watched_product_id'],
+                                     request.json['target_price'])
     if ret[0]:
         print(f'Error in update_watched endpoint: {ret}')
         return build_resp(ret[1], 500)

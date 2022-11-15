@@ -70,10 +70,11 @@ def search_products():
             print('In search_products endpoint. No results from Kroger')
             return {'pages': 0, 'data': []}, 200
 
-        print(ret[1]['meta'])
         total: int = int(ret[1]['meta']['pagination']['total'])
         pages: int = math.ceil(total / page_size)
         data: dict = ret[1]['data']
+        # print(data)
+        # print(meta)
         return {'pages': pages, 'data': data}, 200
     else:
         # Client provides the pagination details
@@ -83,6 +84,7 @@ def search_products():
                                            session.get('location_id'),
                                            page_size,
                                            int(page))
+        # print(ret[1])
         if ret[0]:
             print(f'Error in search_products endpoint: {ret}')
             return ret[1], 500

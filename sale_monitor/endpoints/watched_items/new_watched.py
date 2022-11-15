@@ -13,13 +13,19 @@ bp = Blueprint('new_watched', __name__)
 @bp.route('/new_watched', methods=('POST', 'OPTIONS'))
 def new_watched():
     """ Adds a new watched product to the db.
-        Returns a complete product object
-        {'id': <id>,
+        Expects:
+        {
+          'product_description': <>,
          'product_upc': <>,
+         'normal_price': <>,
+         'promo_price': <>,
          'target_price': <>,
-         'last_discount_rate: <>
+         'image_url': <>
         }
-        Expecting: {'product_upc': <>, 'target_price': <>}
+
+        Returns the above  plus
+            'id' (primary key of watched_products entry)
+            'date_last_checked': String MM/DD the pricing was last checked for the product.
     """
     if request.method == 'OPTIONS':
         print('in new_watched preflight')
@@ -29,7 +35,12 @@ def new_watched():
         return resp
     ret = DBInterface.new_watched(session.get('contact_id'),
                                   request.json['product_upc'],
+                                  request.json['product_description'],
+                                  request.json['image_url'],
+                                  request.json['normal_price'],
+                                  request.json['promo_price'],
                                   request.json['target_price'])
+
     if ret[0]:
         print(f'Error in new_watched endpoint: {ret}')
         resp = Response(response=json.dumps(ret[1]))
@@ -45,5 +56,4 @@ def new_watched():
             print(f'Error pulling the new product details: {ret}')
             return build_resp(ret[1], 500)
         product_dict: dict = ret[1]
-        product_dict['id'] = product_id
         return build_resp(product_dict, 200)
