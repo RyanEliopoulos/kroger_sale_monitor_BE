@@ -19,9 +19,11 @@ def set_email():
         add_cors_headers(resp)
         return resp
     print('In set_email endpint.')
-    new_email: str = request.json.get('email')
+    print(request.json['email'])
+    new_email: str = request.json['email']
     #@TODO make sure this works. Add a guard to catch API calls missing the contact_id
     # (above unnecessary since schema.sql is inserting the one and only entry, so one will always be present.
+    print(f'session contact_id is {session.get("contact_id")}')
     ret = DBInterface.set_email(session.get('contact_id'), new_email)
     if ret[0]:
         print(f'Error in set_email endpoint: {ret}')

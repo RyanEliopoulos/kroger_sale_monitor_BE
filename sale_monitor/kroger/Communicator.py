@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 from typing import Tuple
 
 
@@ -102,8 +103,9 @@ class Communicator:
         if req.status_code != 200:
             print(f'Error in product_details: {req.text}')
             return -1, {'error': req.text}
-        print(f'Success in product_details: {req.json()}')
-        return 0, {'response': req.json()}
+
+        print(f'Success in product_details: {json.dumps(req.json(), indent=2)}')
+        return 0, req.json()
 
     @staticmethod
     def search_locations(zipcode: str) -> Tuple[int, dict]:

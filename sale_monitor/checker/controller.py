@@ -25,9 +25,10 @@ def controller():
         else:
             # Evaluate pricing difference and
             try:
-                promo_price: Decimal = Decimal(ret[1]['data']['items'][0]['price']['promo'])
-                normal_price: Decimal = Decimal(ret[1]['data']['items'][0]['price']['regular'])
+                promo_price: Decimal = Decimal(ret[1]['data']['items'][0]['price']['promo']).quantize(Decimal('1.00'))
+                normal_price: Decimal = Decimal(ret[1]['data']['items'][0]['price']['regular']).quantize(Decimal('1.00'))
             except KeyError as e:
+                log.log(f'{ret[1]}')
                 log.log(f"KeyError checking product {dic['product_description']}")
                 continue
             target_price: Decimal = Decimal(dic['target_price']).quantize(Decimal('1.00'))  # Enforce 2 decimal places
@@ -36,6 +37,7 @@ def controller():
                 compare_at = promo_price
             else:
                 compare_at = normal_price
+                promo_price = normal_price
             print(f'Compare at: {compare_at}')
             if compare_at <= target_price:
                 # A sale!
@@ -47,8 +49,8 @@ def controller():
                 print(f"sending notifcation to {dic['email']} with message: {msg}")
                 notifier.send_notification(dic['email'], msg)
             # Updating dicts with latest info
-            dic['promo_price'] = promo_price
-            dic['normal_price'] = normal_price
+            dic['promo_price'] = int(promo_price)
+            dic['normal_price'] = int(normal_price)
             dic['timestamp_last_checked'] = datetime.now().timestamp()
 
     update_db(data_dicts)
