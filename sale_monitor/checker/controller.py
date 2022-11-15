@@ -8,6 +8,7 @@ import notifier
 from decimal import Decimal
 from datetime import datetime
 from sale_monitor.kroger.Communicator import Communicator
+from sale_monitor.utils.quantize import quantize
 from typing import List
 
 
@@ -49,8 +50,8 @@ def controller():
                 print(f"sending notifcation to {dic['email']} with message: {msg}")
                 notifier.send_notification(dic['email'], msg)
             # Updating dicts with latest info
-            dic['promo_price'] = int(promo_price)
-            dic['normal_price'] = int(normal_price)
+            dic['promo_price'] = str(promo_price)
+            dic['normal_price'] = str(normal_price)
             dic['timestamp_last_checked'] = datetime.now().timestamp()
 
     update_db(data_dicts)

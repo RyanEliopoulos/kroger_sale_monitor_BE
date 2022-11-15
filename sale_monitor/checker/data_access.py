@@ -69,3 +69,4 @@ def update_watched_data(data_dict):
                              data_dict['normal_price'],
                              data_dict['timestamp_last_checked'],
                              data_dict['watched_product_id']))
+    connection.commit()
