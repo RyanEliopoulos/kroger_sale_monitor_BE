@@ -36,5 +36,6 @@ def set_store():
         add_cors_headers(resp)
         return resp
     else:
+        session['location_id'] = request.json['location_id']
         print('Success in set_store endpoint')
         return {}, 200
