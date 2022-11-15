@@ -150,8 +150,8 @@ class DBInterface:
 
     @staticmethod
     def new_watched(contact_id: int, upc: str, product_description: str,
-                    image_url: str, normal_price: float, promo_price: float,
-                    target_price: float) -> Tuple[int, dict]:
+                    image_url: str, normal_price: str, promo_price: str,
+                    target_price: str) -> Tuple[int, dict]:
         """
           Needs to return the primary key of the new entry
         """
@@ -220,7 +220,7 @@ class DBInterface:
         return 0, {}
 
     @staticmethod
-    def update_watched(watched_product_id: int, target_price: float) -> Tuple[int, dict]:
+    def update_watched(watched_product_id: int, target_price: str) -> Tuple[int, dict]:
         print('in DBinterface.update_watched')
         sqlstring = """ UPDATE watched_products
                         SET target_price = ?

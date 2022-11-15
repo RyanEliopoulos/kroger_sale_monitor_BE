@@ -1,8 +1,10 @@
 from sale_monitor.database.db import DBInterface
 from sale_monitor.endpoints.utils import add_cors_headers
 from sale_monitor.endpoints.utils import build_resp
+from sale_monitor.utils.quantize import quantize
 
 import json
+
 from flask import (
     Blueprint, request, session, jsonify, Response
 )
@@ -33,13 +35,19 @@ def new_watched():
         resp = Response()
         add_cors_headers(resp)
         return resp
+    # Truncating incoming price values.
+    # str because float removes trailing zeroes.
+    normal_price: str = str(quantize(request.json['normal_price']))
+    promo_price: str = str(quantize(request.json['promo_price']))
+    target_price: str = str(quantize(request.json['target_price']))
+
     ret = DBInterface.new_watched(session.get('contact_id'),
                                   request.json['product_upc'],
                                   request.json['product_description'],
                                   request.json['image_url'],
-                                  request.json['normal_price'],
-                                  request.json['promo_price'],
-                                  request.json['target_price'])
+                                  normal_price,
+                                  promo_price,
+                                  target_price)
 
     if ret[0]:
         print(f'Error in new_watched endpoint: {ret}')
