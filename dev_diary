@@ -2,6 +2,8 @@
 
     smtp can only send ascii characters. Non-ascii raises an error.
 
+    SMTP password for gmail is generated in "security -> signing in to google"
+
 
 11/14/2022
     Kroger's API is broken tonight so can't confirm but I think the alert system is operational.

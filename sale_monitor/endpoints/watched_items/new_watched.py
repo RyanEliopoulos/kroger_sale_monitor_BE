@@ -42,7 +42,7 @@ def new_watched():
     target_price: str = str(quantize(request.json['target_price']))
     print(f'The target price: {target_price}')
 
-    ret = DBInterface.new_watched(session.get('contact_id'),
+    ret = DBInterface.new_watched(session.get('email'),
                                   request.json['product_upc'],
                                   request.json['product_description'],
                                   request.json['image_url'],

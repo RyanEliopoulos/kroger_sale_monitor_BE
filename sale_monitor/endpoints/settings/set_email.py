@@ -21,15 +21,14 @@ def set_email():
     print('In set_email endpint.')
     print(request.json['email'])
     new_email: str = request.json['email']
-    #@TODO make sure this works. Add a guard to catch API calls missing the contact_id
-    # (above unnecessary since schema.sql is inserting the one and only entry, so one will always be present.
-    print(f'session contact_id is {session.get("contact_id")}')
-    ret = DBInterface.set_email(session.get('contact_id'), new_email)
+    print(f'session email is {session.get("email")}')
+    ret = DBInterface.set_email(session.get('email'), new_email)
     if ret[0]:
         print(f'Error in set_email endpoint: {ret}')
         resp = Response(response=json.dumps(ret[1]))
         resp.status_code = 500
         add_cors_headers(resp)
         return resp
+    session['email'] = new_email
     print('Success in set_email endpoint')
     return {}, 200

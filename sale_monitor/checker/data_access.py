@@ -12,8 +12,7 @@ def get_watch_data() -> List[dict]:
     crsr: sqlite3.Cursor = connection.cursor()
 
     sqlstring = """ Select 
-                        cd.contact_id
-                        ,wp.watched_product_id
+                        wp.watched_product_id
                         ,cd.email
                         ,cd.location_id
                         ,wp.product_upc
@@ -23,9 +22,8 @@ def get_watch_data() -> List[dict]:
                         ,wp.promo_price
                         ,wp.normal_price
                     FROM contact_details cd, watched_products wp
-                    WHERE cd.contact_id = wp.contact_id
-                    GROUP BY cd.contact_id
-                             ,wp.watched_product_id
+                    WHERE cd.email = wp.contact_email
+                    GROUP BY wp.watched_product_id
                              ,cd.location_id
                              ,cd.email
                              ,wp.product_upc
@@ -39,8 +37,7 @@ def get_watch_data() -> List[dict]:
             # Ignore 'accounts' with no watched products
             continue
         return_list.append(
-            {'contact_id': row['contact_id'],
-             'email': row['email'],
+            {'email': row['email'],
              'watched_product_id': row['watched_product_id'],
              'location_id': row['location_id'],
              'product_upc': row['product_upc'],

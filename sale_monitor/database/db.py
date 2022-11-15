@@ -64,7 +64,7 @@ class DBInterface:
         sqlstring: str = """ SELECT * 
                              FROM contact_details
                                   LEFT JOIN watched_products 
-                                  ON contact_details.contact_id = watched_products.contact_id 
+                                  ON contact_details.email = watched_products.contact_email 
                          """
         ret = DBInterface._execute_query(sqlstring, selection=True)
         if ret[0]:
@@ -78,7 +78,6 @@ class DBInterface:
             return None
         print('Successfully pulled data in get_all. Packaging for consumption')
         data_dict: dict = {
-            'contact_id': sqlrows[0]['contact_id'],
             'location_id': sqlrows[0]['location_id'],
             'chain': sqlrows[0]['chain'],
             'address1': sqlrows[0]['address1'],
@@ -108,14 +107,14 @@ class DBInterface:
         return 0, {'data': data_dict}
 
     @staticmethod
-    def set_email(contact_id: int, email: str) -> Tuple[int, dict]:
+    def set_email(current_email: int, new_email: str) -> Tuple[int, dict]:
         print('in DBInterface.set_email')
         sqlstring: str = """ UPDATE contact_details
                              SET email = ?
-                             WHERE contact_id = ?
+                             WHERE email = ?
                          """
-        ret = DBInterface._execute_query(sqlstring, (email,
-                                                     contact_id))
+        ret = DBInterface._execute_query(sqlstring, (new_email,
+                                                     current_email))
         if ret[0]:
             print(f'error executing SQL in DBI.set_email: {ret}')
             return ret
@@ -123,7 +122,7 @@ class DBInterface:
         return 0, {}
 
     @staticmethod
-    def set_store(contact_id: int, location_id: str, chain: str
+    def set_store(email: str, location_id: str, chain: str
                   , address1: str, city: str, state: str, zipcode: str) -> Tuple[int, dict]:
         print('in DBInterface.set_store')
         sqlstring: str = """ UPDATE contact_details
@@ -133,7 +132,7 @@ class DBInterface:
                                  city = ?,
                                  state = ?,
                                  zipcode = ?
-                             WHERE contact_id = ?
+                             WHERE email = ?
                          """
         ret = DBInterface._execute_query(sqlstring, (location_id,
                                                      chain,
@@ -141,7 +140,7 @@ class DBInterface:
                                                      city,
                                                      state,
                                                      zipcode,
-                                                     contact_id))
+                                                     email))
         if ret[0]:
             print(f'Error executing SQL in set_store: {ret}')
             return ret
@@ -149,7 +148,7 @@ class DBInterface:
         return 0, {}
 
     @staticmethod
-    def new_watched(contact_id: int, upc: str, product_description: str,
+    def new_watched(email: str, upc: str, product_description: str,
                     image_url: str, normal_price: str, promo_price: str,
                     target_price: str) -> Tuple[int, dict]:
         """
@@ -157,13 +156,13 @@ class DBInterface:
         """
         print('in DBInterface.new_watched')
         sqlstring: str = """ INSERT INTO watched_products 
-                                (contact_id, product_upc, product_description, image_url, 
+                                (contact_email, product_upc, product_description, image_url, 
                                 normal_price, promo_price, target_price, timestamp_last_checked)
                              VALUES (?, ?, ?, ?, 
                                     ?, ?, ?, ?)
                          """
         ret = DBInterface._execute_query(sqlstring,
-                                         (contact_id,
+                                         (email,
                                           upc,
                                           product_description,
                                           image_url,

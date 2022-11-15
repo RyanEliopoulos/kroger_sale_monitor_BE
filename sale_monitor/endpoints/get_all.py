@@ -41,7 +41,7 @@ def get_all():
         # Sending data to client and updating session cookie
         data_dict: dict = ret[1]['data']
         print(f'Successfully pulled data for get_all endpoint: {data_dict}')
-        session['contact_id'] = data_dict['contact_id']
+        session['email'] = data_dict['email']
         session['location_id'] = data_dict['location_id']
         print('\n\n')
         print(data_dict)

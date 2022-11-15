@@ -22,7 +22,7 @@ def set_store():
         add_cors_headers(resp)
         return resp
     print(request.json)
-    ret = DBInterface.set_store(session.get('contact_id'),
+    ret = DBInterface.set_store(session.get('email'),
                                 request.json['location_id'],
                                 request.json['chain'],
                                 request.json['address1'],

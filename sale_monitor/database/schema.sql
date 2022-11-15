@@ -3,8 +3,7 @@ DROP TABLE IF EXISTS contact_details;
 
 
 CREATE TABLE contact_details (
-    contact_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT UNIQUE NOT NULL,
+    email TEXT PRIMARY KEY,
     location_id TEXT NOT NULL,
     chain TEXT NOT NULL,  -- e.g. Kroger
     address1 TEXT NOT NULL,
@@ -14,8 +13,9 @@ CREATE TABLE contact_details (
 );
 
 CREATE TABLE watched_products (
+
     watched_product_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    contact_id INTEGER NOT NULL,
+    contact_email TEXT NOT NULL,
     product_upc TEXT NOT NULL,
     product_description TEXT NOT NULL,
     normal_price TEXT NOT NULL,
@@ -25,10 +25,10 @@ CREATE TABLE watched_products (
     timestamp_last_checked INTEGER,
     image_url TEXT NOT NULL,
 
-    FOREIGN KEY (contact_id) REFERENCES contact_details(contact_id)
+    FOREIGN KEY (contact_email) REFERENCES contact_details(email)
 );
 
 
 --- Simplify error handling and whatever. Just assume there is always 1 entry in the contact_details table.
 INSERT INTO contact_details
-VALUES (1, 'email', '', 'chain', 'address1', 'city', 'state', 'zipcode')
+VALUES ('email', '', 'chain', 'address1', 'city', 'state', 'zipcode')

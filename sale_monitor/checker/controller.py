@@ -8,7 +8,6 @@ import notifier
 from decimal import Decimal
 from datetime import datetime
 from sale_monitor.kroger.Communicator import Communicator
-from sale_monitor.utils.quantize import quantize
 from typing import List
 
 
