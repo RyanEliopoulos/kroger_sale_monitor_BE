@@ -4,12 +4,12 @@ DROP TABLE IF EXISTS contact_details;
 
 CREATE TABLE contact_details (
     email TEXT PRIMARY KEY,
-    location_id TEXT NOT NULL,
-    chain TEXT NOT NULL,  -- e.g. Kroger
-    address1 TEXT NOT NULL,
-    city TEXT NOT NULL,
-    state TEXT NOT NULL,
-    zipcode TEXT NOT NULL
+    location_id TEXT NOT NULL DEFAULT '',   -- empty string indicates not store chosen.
+    chain TEXT NOT NULL DEFAULT '',         -- e.g. Kroger
+    address1 TEXT NOT NULL DEFAULT '',
+    city TEXT NOT NULL DEFAULT '',
+    state TEXT NOT NULL DEFAULT '',
+    zipcode TEXT NOT NULL DEFAULT ''
 );
 
 CREATE TABLE watched_products (
@@ -27,8 +27,3 @@ CREATE TABLE watched_products (
 
     FOREIGN KEY (contact_email) REFERENCES contact_details(email)
 );
-
-
---- Simplify error handling and whatever. Just assume there is always 1 entry in the contact_details table.
-INSERT INTO contact_details
-VALUES ('email', '', 'chain', 'address1', 'city', 'state', 'zipcode')

@@ -58,15 +58,25 @@ class DBInterface:
         return g.db
 
     @staticmethod
-    def get_all() -> Union[None, Tuple[int, dict]]:
-        """ Will pull out all of the info. Should return None if there is no contact entry? """
+    def add_account(email: str) -> Tuple[int, dict]:
+        sqlstring = """ INSERT INTO contact_details (email)
+                        VALUES (?)
+                    """
+        return DBInterface._execute_query(sqlstring, (email,))
+
+    @staticmethod
+    def get_all(email: str) -> Tuple[int, dict]:
+        """ Pulls all data associated with a particular email """
         print('in get_all')
         sqlstring: str = """ SELECT * 
                              FROM contact_details
                                   LEFT JOIN watched_products 
                                   ON contact_details.email = watched_products.contact_email 
+                             WHERE contact_details.email = ?
                          """
-        ret = DBInterface._execute_query(sqlstring, selection=True)
+        ret = DBInterface._execute_query(sqlstring,
+                                         (email,),
+                                         selection=True)
         if ret[0]:
             print(f'SQL error in get_all: {ret}')
             return ret
@@ -75,7 +85,7 @@ class DBInterface:
         if len(sqlrows) == 0:
             # No contact information exists
             print('get_all row length is zero. No contact information exists')
-            return None
+            return 0, {'data': None}
         print('Successfully pulled data in get_all. Packaging for consumption')
         data_dict: dict = {
             'location_id': sqlrows[0]['location_id'],
@@ -87,6 +97,7 @@ class DBInterface:
             'email':  sqlrows[0]['email'],
             'products': []
         }
+        print(f'Here are the sqlrows: {sqlrows}')
         for row in sqlrows:
             if row['watched_product_id'] is None:
                 # watched_products columns are null.

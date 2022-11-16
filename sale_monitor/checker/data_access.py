@@ -52,6 +52,8 @@ def get_watch_data() -> List[dict]:
 
 
 def update_watched_data(data_dict):
+    """ Use watched_product_id instead of UPC in case pricing is different across stores
+    """
     sqlstring: str = """ UPDATE watched_products
                          SET promo_price = ?,
                              normal_price = ?,

@@ -44,7 +44,12 @@ def create_app(test_config=None):
     app.register_blueprint(new_watched.bp)
     app.register_blueprint(update_watched.bp)
 
-    from .endpoints import get_all, search_products
+    from .endpoints.initialization import has_session, start_session
+    app.register_blueprint(has_session.bp)
+    app.register_blueprint(start_session.bp)
+
+    from .endpoints import search_products
+    from sale_monitor.endpoints.initialization import get_all
     app.register_blueprint(get_all.bp)
     app.register_blueprint(search_products.bp)
 
