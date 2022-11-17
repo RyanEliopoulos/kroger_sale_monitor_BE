@@ -1,3 +1,43 @@
+11/16/2022
+
+    Documenting NGINX stuff this time
+
+    /etc/nginx/nginx.conf is the config file.
+
+    We've got Lets Encrypt Certbot handling the SSL certificate.
+
+    /etc/profile for default env vars.
+
+    pipenv virtualenvs are stored in ~./.local/share
+
+    Made a systemd service for the server so that everything runs at boot.
+    Good resource here: https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04#step-4-configuring-gunicorn
+
+    Oh remember from last time, different distros have a different arrangement of nginx files.
+    And similarly, different unix groups (digital ocean guide recommends www-data but is absent from Amazon Linux 2).
+
+    sudo systemctl state <service>
+    sudo systemctl restart <service>
+    sudo systemctl daemon-reload
+
+    sudo less /var/log/nginx/error.log: checks the Nginx error logs.
+    sudo less /var/log/nginx/access.log: checks the Nginx access logs.
+    sudo journalctl -u nginx: checks the Nginx process logs.
+    sudo journalctl -u myproject: checks your Flask app’s Gunicorn logs.
+
+
+    Restart nginx after configuration file changes
+    run daemon-reload after updating a .service file
+
+    Can't figure out why the unix socket approach is not working.  systemd.service works just fine
+    when binding to localhost:port. The trailing slash makes or breaks the API calls..
+
+    Solved the problem: just as we needed the trailing slash in
+        http://localhost:5000/
+    for the proxy to work, we required the equivalent on the unix socket
+        http://unix:/home/....../sale_monitor.sock:/
+
+
 11/15/2022
 
     smtp can only send ascii characters. Non-ascii raises an error.
