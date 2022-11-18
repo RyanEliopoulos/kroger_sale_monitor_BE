@@ -1,3 +1,15 @@
+11/17/2022
+
+    Deploy:
+        Run init.sh to install necessary python packages (assumes pipenv is already installed)
+        Register and start the systemd service
+        configure nginx to forward requests to the unix socket
+        profit
+
+    Systemd: user environment variables were not accessible from within the service. Needed to specify additional
+             "Environment" values. The quotes around the value were taken literally so avoid those.
+
+
 11/16/2022
 
     Documenting NGINX stuff this time
