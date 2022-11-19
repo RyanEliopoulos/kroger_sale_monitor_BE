@@ -1,3 +1,19 @@
+11/18/2022
+
+    systemctl enable nginx: To ensure that nginx starts on boot now that we've gone through the trouble of making sure
+                            our gunicorn server does.
+
+    Python module/package import system is really testing my patience. Trying to import from a sibling directory feels i
+    impossible. Create a symlink in the checker directory to Communicator and update the imports in controller.py
+    'checker' must be the working directory for the script to run properly.
+
+    pretty print dictionaries using json.dumps with and indent argument.
+
+    cron: need to export environment variables in in wrapper scripts I guess. Also include a PATH variable in the
+          crontab.
+
+
+
 11/17/2022
 
     Deploy:
