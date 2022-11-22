@@ -40,7 +40,7 @@ class DBInterface:
             db.close()
 
     @staticmethod
-    def get_db() -> sqlite3.Connection:
+    def get_db(enforce_foreign_keys=True) -> sqlite3.Connection:
         """ If multiple db calls are made per request this will
             prevent opening multiple connections to the database
 
@@ -53,7 +53,8 @@ class DBInterface:
             )
             # Activating foreign key constraint enforcement
             cursor: sqlite3.Cursor = g.db.cursor()
-            cursor.execute('PRAGMA foreign_keys = 1')
+            if enforce_foreign_keys:
+                cursor.execute('PRAGMA foreign_keys = 1')
             g.db.row_factory = sqlite3.Row
         return g.db
 
@@ -119,16 +120,37 @@ class DBInterface:
 
     @staticmethod
     def set_email(current_email: int, new_email: str) -> Tuple[int, dict]:
+        """
+            Email is both a primary key and a foreign key, thus the
+            manual control.
+        """
+
         print('in DBInterface.set_email')
+        db: sqlite3.Connection = DBInterface.get_db(enforce_foreign_keys=False)
+        crsr: sqlite3.Cursor = db.cursor()
+        sqlstring: str = """ UPDATE watched_products
+                             SET contact_email = ?
+                             WHERE contact_email = ?
+                         """
+        try:
+            crsr.execute(sqlstring, (new_email,
+                                     current_email))
+        except sqlite3.Error as e:
+            print(f'SQL error in set_email: {e}')
+            return -1, {'error': str(e)}
+
+        # Updating contact_details
         sqlstring: str = """ UPDATE contact_details
                              SET email = ?
                              WHERE email = ?
                          """
-        ret = DBInterface._execute_query(sqlstring, (new_email,
-                                                     current_email))
-        if ret[0]:
-            print(f'error executing SQL in DBI.set_email: {ret}')
-            return ret
+        try:
+            crsr.execute(sqlstring, (new_email,
+                                     current_email))
+        except sqlite3.Error as e:
+            print(f'SQL error in set_email: {e}')
+            return -1, {'error': str(e)}
+        db.commit()
         print('Successfully set_email')
         return 0, {}
 
