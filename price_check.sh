@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Assumes intial wd is the API project root.
+#  Assumes initial wd is the API project root.
 #
 #  Need to include the environment variables here or find another means of providing them.
 #
