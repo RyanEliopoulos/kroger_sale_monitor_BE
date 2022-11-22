@@ -13,6 +13,9 @@ bp = Blueprint('get_all', __name__)
 def get_all():
     """ Returns {'data': <data>}, which may be None if initial contact info is not present.
         Upon failure returns {'error': <error}
+
+
+        DEPRECATED
     """
     if request.method == 'OPTIONS':
         print('in get_all preflight')

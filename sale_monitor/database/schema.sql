@@ -9,7 +9,8 @@ CREATE TABLE contact_details (
     address1 TEXT NOT NULL DEFAULT '',
     city TEXT NOT NULL DEFAULT '',
     state TEXT NOT NULL DEFAULT '',
-    zipcode TEXT NOT NULL DEFAULT ''
+    zipcode TEXT NOT NULL DEFAULT '',
+    receive_alerts NOT NULL DEFAULT 1
 );
 
 CREATE TABLE watched_products (

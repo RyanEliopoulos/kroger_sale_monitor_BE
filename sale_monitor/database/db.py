@@ -96,6 +96,7 @@ class DBInterface:
             'state': sqlrows[0]['state'],
             'zipcode': sqlrows[0]['zipcode'],
             'email':  sqlrows[0]['email'],
+            'receive_alerts': sqlrows[0]['receive_alerts'],
             'products': []
         }
         print(f'Here are the sqlrows: {sqlrows}')
@@ -178,6 +179,20 @@ class DBInterface:
             print(f'Error executing SQL in set_store: {ret}')
             return ret
         print('success executing SQL in set_store')
+        return 0, {}
+
+    @staticmethod
+    def set_receive_alerts(email: str, receive_alerts: str) -> Tuple[int, dict]:
+        """  receive_alerts: str, but '0' or '1'
+        """
+        sqlstring = """ UPDATE contact_details
+                        SET receive_alerts = ?
+                        WHERE email = ?
+                    """
+        ret = DBInterface._execute_query(sqlstring, (receive_alerts,
+                                                     email))
+        if ret[0]:
+            return ret
         return 0, {}
 
     @staticmethod

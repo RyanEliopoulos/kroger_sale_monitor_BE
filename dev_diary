@@ -1,3 +1,10 @@
+11/22/2022
+    Need to clarify what sort of implicit casting is occurring across each layer of the app.
+        sqlite3
+        json.dumps
+        flask (reading request.json)
+        (javascript) JSON.stringify.
+
 11/18/2022
 
     systemctl enable nginx: To ensure that nginx starts on boot now that we've gone through the trouble of making sure

@@ -22,7 +22,9 @@ def get_watch_data() -> List[dict]:
                         ,wp.promo_price
                         ,wp.normal_price
                     FROM contact_details cd, watched_products wp
-                    WHERE cd.email = wp.contact_email
+                    WHERE 
+                        cd.email = wp.contact_email
+                        AND cd.receive_alerts = 1
                     GROUP BY wp.watched_product_id
                              ,cd.location_id
                              ,cd.email
