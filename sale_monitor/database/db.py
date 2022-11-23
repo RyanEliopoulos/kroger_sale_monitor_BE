@@ -108,9 +108,9 @@ class DBInterface:
                 'watched_product_id': row['watched_product_id'],
                 'product_upc': row['product_upc'],
                 'product_description': row['product_description'],
-                'normal_price': row['normal_price'],
-                'promo_price': row['promo_price'],
-                'target_price': row['target_price'],
+                'normal_price': float(row['normal_price']),
+                'promo_price': float(row['promo_price']),
+                'target_price': float(row['target_price']),
                 'image_url': row['image_url'],
                 'last_discount_rate': row['last_discount_rate'],
             }
