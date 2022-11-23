@@ -8,6 +8,17 @@
 
     Remember to restart the systemd service after pulling latest..
 
+    Addressed the refresh problem with nginx routing. All URLs fitting /apps/sale_monitor load the index.html.
+    Perhaps a better solution could be done with a redirect and the originating URL in the query string.
+
+    NGINX note:
+    
+    location /service/ {
+        # Note the trailing slash on the proxy_pass.
+        # It tells nginx to replace /service/ with / when passing the request.
+        proxy_pass http://apache/;
+    }
+
 11/18/2022
 
     systemctl enable nginx: To ensure that nginx starts on boot now that we've gone through the trouble of making sure
